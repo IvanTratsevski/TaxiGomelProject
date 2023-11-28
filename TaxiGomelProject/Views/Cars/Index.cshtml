@@ -1,0 +1,105 @@
+﻿@* @model IEnumerable<TaxiGomelProject.Models.Car> *@
+@model CarsViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Автомобили</h1>
+
+<p>
+    <a asp-action="Create">Добавить</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Регистрационный номер
+            </th>
+            <th>
+                Номер каркаса
+            </th>
+            <th>
+                Номер двигателя
+            </th>
+            <th>
+                Год выпуска
+            </th>
+            <th>
+                Пробег
+            </th>
+            <th>
+                Последний тех. осмотр
+            </th>
+            <th>
+                Особые отметки
+            </th>
+            <th>
+                Марка
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Cars) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegistrationNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CarcaseNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EngineNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReleaseYear)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mileage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastTi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SpecialMarks)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CarModel.ModelName)
+            </td>
+            <td>
+                    <div class="list-group">
+                        <a asp-action="Edit" asp-route-id="@item.CarId" class="list-group-item list-group-item-primary">Редактировать</a>
+                        <a asp-action="Details" asp-route-id="@item.CarId" class="list-group-item list-group-item-success">Подробности</a>
+                        <a asp-action="Delete" asp-route-id="@item.CarId" class="list-group-item list-group-item-danger">Удалить</a>
+                    </div>
+                 
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<p>
+    <div class="btn-group" role="group" aria-label="Basic example">
+    
+    @if (Model.PageViewModel.HasPreviousPage)
+    {
+            <button type="button" class="btn btn-primary">
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber - 1)" style="text-decoration:none; color:white">
+                    Назад
+                </a>
+            </button>
+       
+    }
+    @if (Model.PageViewModel.HasNextPage)
+    {
+            <button type="button" class="btn btn-primary">
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber + 1)" style="text-decoration:none; color:white">
+                    Вперед
+                </a>
+            </button>
+        
+    }
+    </div>
+</p>
