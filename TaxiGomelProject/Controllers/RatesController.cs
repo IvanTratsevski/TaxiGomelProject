@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using TaxiGomelProject.Data;
 using TaxiGomelProject.Models;
 using TaxiGomelProject.Services;
+using TaxiGomelProject.ViewModels.Rates;
 
 namespace TaxiGomelProject.Controllers
 {
@@ -27,13 +29,38 @@ namespace TaxiGomelProject.Controllers
         }
 
         // GET: Rates
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(decimal price, string rateName, int page = 1, SortState sortOrder = SortState.RateNameAsc)
         {
             int pageSize = 10;
+            if (!string.IsNullOrEmpty(rateName))
+            {
+                _rates = _rates.Where(c => c.RateDescription == rateName).ToList();
+            }
+            if (price != 0)
+            {
+                _rates = _rates.Where(c => c.RatePrice == price).ToList();
+            }
+            switch (sortOrder)
+            {
+                case SortState.RateNameDesc:
+                    _rates = _rates.OrderByDescending(s => s.RateDescription).ToList();
+                    break;
+                case SortState.PriceAsc:
+                    _rates = _rates.OrderBy(s => s.RatePrice).ToList();
+                    break;
+                case SortState.PriceDesc:
+                    _rates = _rates.OrderByDescending(s => s.RatePrice).ToList();
+                    break;
+                default:
+                    _rates = _rates.OrderBy(s => s.RateDescription).ToList();
+                    break;
+            }
             var count = _rates.Count();
             var items = _rates.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
-            RatesViewModel viewModel = new RatesViewModel(items, pageViewModel);
+            RatesFilterViewModel ratesFilterViewModel = new RatesFilterViewModel(price, rateName);
+            RatesSortViewModel ratesSortViewModel = new RatesSortViewModel(sortOrder);
+            RatesViewModel viewModel = new RatesViewModel(items, pageViewModel,ratesFilterViewModel,ratesSortViewModel);
 
             return View(viewModel);
         }
@@ -116,7 +143,6 @@ namespace TaxiGomelProject.Controllers
                     await _context.SaveChangesAsync();
                     _ratesService.AddData("rates");
                     _rates = _ratesService.GetData("rates").ToList();
-                    _ratesService.AddData("rates");
                 }
                 catch (DbUpdateConcurrencyException)
                 {

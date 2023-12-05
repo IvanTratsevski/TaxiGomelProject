@@ -24,7 +24,7 @@ namespace TaxiGomelProject.Models
         public string? LastName { get; set; }
         [Display(Name = "Возраст")]
         [Required(ErrorMessage = "Возраст не указан")]
-        [Range(18,100)]
+        [Range(18, 100)]
         public int? Age { get; set; }
         [Display(Name = "Должность")]
         [Required(ErrorMessage = "Должность не указана")]

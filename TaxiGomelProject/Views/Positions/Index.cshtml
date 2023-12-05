@@ -1,0 +1,100 @@
+﻿@using TaxiGomelProject.ViewModels.Positions
+@model PositionsViewModel
+
+@{
+    ViewData["Title"] = "Должности";
+}
+
+<h1>Должности</h1>
+<form method="get" style="width:30%">
+    <div class="form-group">
+        <label>Должность: </label>
+        <input class="form-control" name="positionName" asp-items="@Model.PositionsFilterViewModel.SelectedPositionName"></input>
+    </div>
+    <div class="form-group">
+        <label>Оклад: </label>
+        <input class="form-control" name="salary" asp-items="@Model.PositionsFilterViewModel.SelectedSalary"></input>
+    </div>
+    <input type="submit" value="Фильтр" class="btn btn-primary" />
+</form>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Создать</a>
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.PositionsSortViewModel.PositionNameSort)"
+                   asp-route-positionName="@(Model.PositionsFilterViewModel.SelectedPositionName)"
+                   asp-route-salary="@(Model.PositionsFilterViewModel.SelectedSalary)">Должность</a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.PositionsSortViewModel.SalarySort)"
+                   asp-route-positionName="@(Model.PositionsFilterViewModel.SelectedPositionName)"
+                   asp-route-salary="@(Model.PositionsFilterViewModel.SelectedSalary)">Оклад</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Positions) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PositionName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Salary)
+            </td>
+            <td>
+                    <div class="list-group">
+                        @if (User.IsInRole("admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.PositionId" class="list-group-item list-group-item-primary">Редактировать</a>
+                            <a asp-action="Delete" asp-route-id="@item.PositionId" class="list-group-item list-group-item-danger">Удалить</a>
+                        }
+                        @if (User.IsInRole("admin") || User.IsInRole("user"))
+                        {
+                            <a asp-action="Details" asp-route-id="@item.PositionId" class="list-group-item list-group-item-success">Подробности</a>
+                        }
+                    </div>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<p>
+    <div class="btn-group" role="group" aria-label="Basic example">
+
+        @if (Model.PageViewModel.HasPreviousPage)
+        {
+                <a asp-action="Index"
+                   class="btn btn-primary"
+                   asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+               asp-route-positionName="@(Model.PositionsFilterViewModel.SelectedPositionName)"
+               asp-route-salary="@(Model.PositionsFilterViewModel.SelectedSalary)"
+               asp-route-sortorder="@(Model.PositionsSortViewModel.Current)"
+                   style="text-decoration:none; color:white">
+                    Назад
+                </a>
+
+        }
+        @if (Model.PageViewModel.HasNextPage)
+        {
+                <a asp-action="Index"
+                   class="btn btn-primary"
+                   asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+               asp-route-positionName="@(Model.PositionsFilterViewModel.SelectedPositionName)"
+               asp-route-salary="@(Model.PositionsFilterViewModel.SelectedSalary)"
+               asp-route-sortorder="@(Model.PositionsSortViewModel.Current)"
+                   style="text-decoration:none; color:white">
+                    Вперед
+                </a>
+
+        }
+    </div>
+</p>

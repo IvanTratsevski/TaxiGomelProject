@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using TaxiGomelProject.Data;
 using TaxiGomelProject.Models;
 using TaxiGomelProject.Services;
+using TaxiGomelProject.ViewModels.CarModels;
 
 namespace TaxiGomelProject.Controllers
 {
@@ -28,18 +31,50 @@ namespace TaxiGomelProject.Controllers
         }
 
         // GET: CarModels
-        public async Task<IActionResult> Index(int page=1)
+        public async Task<IActionResult> Index(decimal price, string carModelName, int page=1, SortState sortOrder = SortState.CarModelNameAsc)
         {
             int pageSize = 10;
+            if (!string.IsNullOrEmpty(carModelName))
+            {
+                _carModels = _carModels.Where(c => c.ModelName == carModelName).ToList();
+            }
+            if (price != 0)
+            {
+                _carModels = _carModels.Where(c => c.Price == price).ToList();
+            }
+            switch (sortOrder)
+            {
+                case SortState.CarModelNameDesc:
+                    _carModels = _carModels.OrderByDescending(s => s.ModelName).ToList();
+                    break;
+                case SortState.PriceAsc:
+                    _carModels = _carModels.OrderBy(s => s.Price).ToList();
+                    break;
+                case SortState.PriceDesc:
+                    _carModels = _carModels.OrderByDescending(s => s.Price).ToList();
+                    break;
+                case SortState.SpecificationAsc:
+                    _carModels = _carModels.OrderBy(s => s.Specifications).ToList();
+                    break;
+                case SortState.SpecificationDesc:
+                    _carModels = _carModels.OrderByDescending(s => s.Specifications).ToList();
+                    break;
+                default:
+                    _carModels = _carModels.OrderBy(s => s.ModelName).ToList();
+                    break;
+            }
             var count = _carModels.Count();
             var items = _carModels.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            CarModelsFilterViewModel carModelsFilterViewModel = new CarModelsFilterViewModel(price, carModelName);
+            CarModelsSortViewModel carModelsSortViewModel = new CarModelsSortViewModel(sortOrder);
             PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
-            CarModelsViewModel viewModel = new CarModelsViewModel(items, pageViewModel);
+            CarModelsViewModel viewModel = new CarModelsViewModel(items, pageViewModel,carModelsFilterViewModel,carModelsSortViewModel);
 
             return View(viewModel);
         }
 
         // GET: CarModels/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.CarModels == null)
@@ -58,6 +93,7 @@ namespace TaxiGomelProject.Controllers
         }
 
         // GET: CarModels/Create
+        [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
             return View();
@@ -84,6 +120,7 @@ namespace TaxiGomelProject.Controllers
         }
 
         // GET: CarModels/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.CarModels == null)
@@ -139,6 +176,7 @@ namespace TaxiGomelProject.Controllers
         }
 
         // GET: CarModels/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.CarModels == null)

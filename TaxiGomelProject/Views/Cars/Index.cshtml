@@ -1,14 +1,39 @@
-﻿@* @model IEnumerable<TaxiGomelProject.Models.Car> *@
+﻿@using TaxiGomelProject.ViewModels.Cars
 @model CarsViewModel
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Автомобили</h1>
-
-<p>
-    <a asp-action="Create">Добавить</a>
-</p>
+<form method="get" style="width:30%">
+    <div class="form-group">
+        <label>Марка: </label>
+        <select class="form-control" name="carModelId" asp-items="@Model.CarsFilterViewModel.CarModels"></select>
+    </div>
+    <div class="form-group">
+        <label>Год выпуска: </label>
+        <input class="form-control" type="date" name="releaseYear" asp-items="@Model.CarsFilterViewModel.SelectedReleaseYear"></input>
+    </div>
+    <div class="form-group">
+        <label>Последний тех. осмотр: </label>
+        <input class="form-control" type="date" name="lastTI" asp-items="@Model.CarsFilterViewModel.SelectedLastTI"></input>
+    </div>
+    <div class="form-group">
+        <label>Пробег: </label>
+        <input class="form-control" name="mileage" asp-items="@Model.CarsFilterViewModel.SelectedMileage" value="@Model.CarsFilterViewModel.SelectedMileage"></input>
+    </div>
+    <div class="form-group">
+        <label>Регистрационный номер: </label>
+        <input class="form-control" name="registrationNumber" asp-items="@Model.CarsFilterViewModel.SelectedRegistrationNumber" value="@Model.CarsFilterViewModel.SelectedRegistrationNumber"></input>
+    </div>
+    <input type="submit" value="Фильтр" class="btn btn-primary" />
+</form>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Создать</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -22,19 +47,43 @@
                 Номер двигателя
             </th>
             <th>
-                Год выпуска
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.CarsSortViewModel.ReleaseYearSort)"
+                   asp-route-releaseYear="@(Model.CarsFilterViewModel.SelectedReleaseYear)"
+                   asp-route-carModelId="@(Model.CarsFilterViewModel.SelectedCarModel)"
+                   asp-route-lastTI="@(Model.CarsFilterViewModel.SelectedLastTI)"
+                   asp-route-mileage="@(Model.CarsFilterViewModel.SelectedMileage)"
+                   asp-route-registrationNumber="@(Model.CarsFilterViewModel.SelectedRegistrationNumber)">Дата выпуска</a>
             </th>
             <th>
-                Пробег
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.CarsSortViewModel.MilleageSort)"
+                   asp-route-releaseYear="@(Model.CarsFilterViewModel.SelectedReleaseYear)"
+                   asp-route-carModelId="@(Model.CarsFilterViewModel.SelectedCarModel)"
+                   asp-route-lastTI="@(Model.CarsFilterViewModel.SelectedLastTI)"
+                   asp-route-mileage="@(Model.CarsFilterViewModel.SelectedMileage)"
+                   asp-route-registrationNumber="@(Model.CarsFilterViewModel.SelectedRegistrationNumber)">Пробег</a>
             </th>
             <th>
-                Последний тех. осмотр
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.CarsSortViewModel.LastTISort)"
+                   asp-route-releaseYear="@(Model.CarsFilterViewModel.SelectedReleaseYear)"
+                   asp-route-carModelId="@(Model.CarsFilterViewModel.SelectedCarModel)"
+                   asp-route-lastTI="@(Model.CarsFilterViewModel.SelectedLastTI)"
+                   asp-route-mileage="@(Model.CarsFilterViewModel.SelectedMileage)"
+                   asp-route-registrationNumber="@(Model.CarsFilterViewModel.SelectedRegistrationNumber)">Последний тех. осмотр</a>
             </th>
             <th>
                 Особые отметки
             </th>
             <th>
-                Марка
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.CarsSortViewModel.CarModelSort)"
+                   asp-route-releaseYear="@(Model.CarsFilterViewModel.SelectedReleaseYear)"
+                   asp-route-carModelId="@(Model.CarsFilterViewModel.SelectedCarModel)"
+                   asp-route-lastTI="@(Model.CarsFilterViewModel.SelectedLastTI)"
+                   asp-route-mileage="@(Model.CarsFilterViewModel.SelectedMileage)"
+                   asp-route-registrationNumber="@(Model.CarsFilterViewModel.SelectedRegistrationNumber)">Марка</a>
             </th>
             <th></th>
         </tr>
@@ -68,9 +117,13 @@
             </td>
             <td>
                     <div class="list-group">
-                        <a asp-action="Edit" asp-route-id="@item.CarId" class="list-group-item list-group-item-primary">Редактировать</a>
-                        <a asp-action="Details" asp-route-id="@item.CarId" class="list-group-item list-group-item-success">Подробности</a>
-                        <a asp-action="Delete" asp-route-id="@item.CarId" class="list-group-item list-group-item-danger">Удалить</a>
+                        @if (User.IsInRole("admin")){
+                            <a asp-action="Edit" asp-route-id="@item.CarId" class="list-group-item list-group-item-primary">Редактировать</a>
+                            <a asp-action="Delete" asp-route-id="@item.CarId" class="list-group-item list-group-item-danger">Удалить</a>
+                        }
+                        @if (User.IsInRole("admin") || User.IsInRole("user")){
+                            <a asp-action="Details" asp-route-id="@item.CarId" class="list-group-item list-group-item-success">Подробности</a>
+                        }
                     </div>
                  
             </td>
@@ -83,22 +136,35 @@
     
     @if (Model.PageViewModel.HasPreviousPage)
     {
-            <button type="button" class="btn btn-primary">
+
                 <a asp-action="Index"
-                   asp-route-page="@(Model.PageViewModel.PageNumber - 1)" style="text-decoration:none; color:white">
+                   class="btn btn-primary"
+                   asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+               asp-route-releaseYear="@(Model.CarsFilterViewModel.SelectedReleaseYear)"
+               asp-route-carModelId="@(Model.CarsFilterViewModel.SelectedCarModel)"
+               asp-route-lastTI="@(Model.CarsFilterViewModel.SelectedLastTI)"
+               asp-route-mileage="@(Model.CarsFilterViewModel.SelectedMileage)"
+               asp-route-registrationNumber="@(Model.CarsFilterViewModel.SelectedRegistrationNumber)"
+               asp-route-sortorder="@(Model.CarsSortViewModel.Current)"
+                   style="text-decoration:none; color:white">
                     Назад
                 </a>
-            </button>
        
     }
     @if (Model.PageViewModel.HasNextPage)
     {
-            <button type="button" class="btn btn-primary">
                 <a asp-action="Index"
-                   asp-route-page="@(Model.PageViewModel.PageNumber + 1)" style="text-decoration:none; color:white">
+                   class="btn btn-primary"
+                   asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+               asp-route-releaseYear="@(Model.CarsFilterViewModel.SelectedReleaseYear)"
+               asp-route-carModelId="@(Model.CarsFilterViewModel.SelectedCarModel)"
+               asp-route-lastTI="@(Model.CarsFilterViewModel.SelectedLastTI)"
+               asp-route-mileage="@(Model.CarsFilterViewModel.SelectedMileage)"
+               asp-route-registrationNumber="@(Model.CarsFilterViewModel.SelectedRegistrationNumber)"
+               asp-route-sortorder="@(Model.CarsSortViewModel.Current)"
+                   style="text-decoration:none; color:white">
                     Вперед
                 </a>
-            </button>
         
     }
     </div>

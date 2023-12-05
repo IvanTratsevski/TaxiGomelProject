@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaxiGomelProject", "TaxiGomelProject\TaxiGomelProject.csproj", "{F68F78CC-0D11-491A-B1C7-9374361F519F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsersPorject", "UsersPorject\UsersPorject.csproj", "{530D4123-C4FE-441A-A425-1C66379C0215}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{F68F78CC-0D11-491A-B1C7-9374361F519F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F68F78CC-0D11-491A-B1C7-9374361F519F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F68F78CC-0D11-491A-B1C7-9374361F519F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{530D4123-C4FE-441A-A425-1C66379C0215}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{530D4123-C4FE-441A-A425-1C66379C0215}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{530D4123-C4FE-441A-A425-1C66379C0215}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{530D4123-C4FE-441A-A425-1C66379C0215}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

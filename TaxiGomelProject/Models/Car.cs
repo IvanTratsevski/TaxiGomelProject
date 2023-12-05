@@ -35,7 +35,7 @@ namespace TaxiGomelProject.Models
         public DateTime? ReleaseYear { get; set; }
         [Display(Name = "Пробег")]
         [Required(ErrorMessage = "Пробег не указан")]
-        [Range(1,500000)]
+        [Range(1, 500000)]
         public int? Mileage { get; set; }
         [Display(Name = "Последний тех. осмотр")]
         [Required(ErrorMessage = "Дата тех. осмотра не указана")]

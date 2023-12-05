@@ -10,7 +10,7 @@ namespace TaxiGomelProject.Models
         {
             Employees = new HashSet<Employee>();
         }
-        [Key]
+
         public int PositionId { get; set; }
         [Display(Name = "Должность")]
         [Required(ErrorMessage = "Должность не указана")]
@@ -18,7 +18,7 @@ namespace TaxiGomelProject.Models
         public string? PositionName { get; set; }
         [Display(Name = "Заработная плата")]
         [Required(ErrorMessage = "Заработная плата не указана")]
-        [Range(1,100000)]
+        [Range(1, 100000)]
         public decimal? Salary { get; set; }
 
         public virtual ICollection<Employee> Employees { get; set; }

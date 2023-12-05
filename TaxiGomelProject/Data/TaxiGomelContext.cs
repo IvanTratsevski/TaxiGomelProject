@@ -19,9 +19,9 @@ namespace TaxiGomelProject.Data
 
         public virtual DbSet<Call> Calls { get; set; } = null!;
         public virtual DbSet<Car> Cars { get; set; } = null!;
-        public virtual DbSet<CarModel> CarModels { get; set; } = null!;
         public virtual DbSet<CarDriver> CarDrivers { get; set; } = null!;
         public virtual DbSet<CarMechanic> CarMechanics { get; set; } = null!;
+        public virtual DbSet<CarModel> CarModels { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<Position> Positions { get; set; } = null!;
         public virtual DbSet<Rate> Rates { get; set; } = null!;

@@ -21,7 +21,7 @@ namespace TaxiGomelProject.Services
 
         public void AddData(string cacheKey)
         {
-            IEnumerable<Employee> employees = _dbContext.Employees.ToList();
+            IEnumerable<Employee> employees = _dbContext.Employees.Include(e => e.Position).ToList();
             if (employees != null)
             {
                 _memoryCache.Set(cacheKey, employees, new MemoryCacheEntryOptions
@@ -37,7 +37,7 @@ namespace TaxiGomelProject.Services
             IEnumerable<Employee> employees;
             if (!_memoryCache.TryGetValue(cacheKey, out employees))
             {
-                employees = _dbContext.Employees.ToList();
+                employees = _dbContext.Employees.Include(e => e.Position).ToList();
                 if (employees != null)
                 {
                     _memoryCache.Set(cacheKey, employees,

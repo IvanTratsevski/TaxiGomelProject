@@ -18,7 +18,7 @@ namespace TaxiGomelProject.Models
         public string? RateDescription { get; set; }
         [Display(Name = "Стоимость")]
         [Required(ErrorMessage = "Стоимость не указана")]
-        [Range(1,100)]
+        [Range(1, 100)]
         public decimal? RatePrice { get; set; }
 
         public virtual ICollection<Call> Calls { get; set; }

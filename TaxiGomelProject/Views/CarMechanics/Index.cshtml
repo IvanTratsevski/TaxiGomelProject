@@ -1,0 +1,76 @@
+﻿@using TaxiGomelProject.ViewModels.CarMechanics
+@model CarMechanicsViewModel
+
+@{
+    ViewData["Title"] = "Машина-механик";
+}
+
+<h1>Машина-механик</h1>
+
+@if (User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Создать</a>
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Машина
+            </th>
+            <th>
+                Механик
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.CarMechanics) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Car.CarcaseNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mechanic.FirstName)
+            </td>
+            <td>
+                    <div class="list-group">
+                        @if (User.IsInRole("admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.CarMechanicId" class="list-group-item list-group-item-primary">Редактировать</a>
+                            <a asp-action="Delete" asp-route-id="@item.CarMechanicId" class="list-group-item list-group-item-danger">Удалить</a>
+                        }
+                        @if (User.IsInRole("admin") || User.IsInRole("user"))
+                        {
+                            <a asp-action="Details" asp-route-id="@item.CarMechanicId" class="list-group-item list-group-item-success">Подробности</a>
+                        }
+                    </div>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<p>
+    <div class="btn-group" role="group" aria-label="Basic example">
+
+        @if (Model.PageViewModel.HasPreviousPage)
+        {
+                <a asp-action="Index"
+                   class="btn btn-primary"
+                   asp-route-page="@(Model.PageViewModel.PageNumber - 1)" style="text-decoration:none; color:white">
+                    Назад
+                </a>
+
+        }
+        @if (Model.PageViewModel.HasNextPage)
+        {
+                <a asp-action="Index"
+               class="btn btn-primary"
+               asp-route-page="@(Model.PageViewModel.PageNumber + 1)" style="text-decoration:none; color:white">
+                    Вперед
+                </a>
+
+        }
+    </div>
+</p>

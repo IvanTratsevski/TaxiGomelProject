@@ -1,12 +1,10 @@
 ﻿@model TaxiGomelProject.Models.CarModel
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Удалить";
 }
 
-<h1>Удаление</h1>
-
-<h3>Внимание! Следующая запись будет удалена!</h3>
+<h1>Удалить</h1>
 <div>
     <h4>Марка автомобиля</h4>
     <hr />
@@ -40,6 +38,6 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="CarModelId" />
         <input type="submit" value="Удалить" class="btn btn-danger" /> |
-        <a asp-action="Index">Вернться к списку</a>
+        <a asp-action="Index">Вернться</a>
     </form>
 </div>

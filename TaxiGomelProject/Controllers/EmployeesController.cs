@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using TaxiGomelProject.Data;
 using TaxiGomelProject.Models;
 using TaxiGomelProject.Services;
+using TaxiGomelProject.ViewModels.Employees;
 
 namespace TaxiGomelProject.Controllers
 {
@@ -27,13 +29,68 @@ namespace TaxiGomelProject.Controllers
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int positionId, int age, int experience, string firstName, string lastName, int page = 1, SortState sortOrder = SortState.FirstNameAsc)
         {
             int pageSize = 10;
+            if (positionId != 0)
+            {
+                _employees = _employees.Where(c => c.PositionId == positionId).ToList();
+            }
+            if (age != 0)
+            {
+                _employees = _employees.Where(c => c.Age == age).ToList();
+            }
+            if (experience != 0)
+            {
+                _employees = _employees.Where(c => c.Experience == experience).ToList();
+            }
+            if (!string.IsNullOrEmpty(firstName))
+            {
+                _employees = _employees.Where(c => c.FirstName == firstName).ToList();
+            }
+            if (!string.IsNullOrEmpty(lastName))
+            {
+                _employees = _employees.Where(c => c.LastName == lastName).ToList();
+            }
+            switch (sortOrder)
+            {
+                case SortState.FirstNameDesc:
+                    _employees = _employees.OrderByDescending(s => s.FirstName).ToList();
+                    break;
+                case SortState.LastNameAsc:
+                    _employees = _employees.OrderBy(s => s.LastName).ToList();
+                    break;
+                case SortState.LastNameDesc:
+                    _employees = _employees.OrderByDescending(s => s.LastName).ToList();
+                    break;
+                case SortState.AgeAsc:
+                    _employees = _employees.OrderBy(s => s.Age).ToList();
+                    break;
+                case SortState.AgeDesc:
+                    _employees = _employees.OrderByDescending(s => s.Age).ToList();
+                    break;
+                case SortState.ExperienceAsc:
+                    _employees = _employees.OrderBy(s => s.Experience).ToList();
+                    break;
+                case SortState.ExperienceDesc:
+                    _employees = _employees.OrderByDescending(s => s.Experience).ToList();
+                    break;
+                case SortState.PositionAsc:
+                    _employees = _employees.OrderBy(s => s.Position.PositionName).ToList();
+                    break;
+                case SortState.PositionDesc:
+                    _employees = _employees.OrderByDescending(s => s.Position.PositionName).ToList();
+                    break;
+                default:
+                    _employees = _employees.OrderBy(s => s.FirstName).ToList();
+                    break;
+            }
             var count = _employees.Count();
             var items = _employees.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
-            EmployeesViewModel viewModel = new EmployeesViewModel(items, pageViewModel);
+            EmployeesFilterViewModel employeesFilterViewModel = new EmployeesFilterViewModel(_context.Positions.ToList(), positionId,age,experience,firstName,lastName);
+            EmployeesSortViewModel employeesSortViewModel = new EmployeesSortViewModel(sortOrder);
+            EmployeesViewModel viewModel = new EmployeesViewModel(items, pageViewModel, employeesFilterViewModel, employeesSortViewModel);
 
             return View(viewModel);
         }

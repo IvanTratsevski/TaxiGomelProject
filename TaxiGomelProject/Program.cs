@@ -3,8 +3,16 @@ using System.Diagnostics.Metrics;
 using TaxiGomelProject.Data;
 using TaxiGomelProject.Services;
 using TaxiGomelProject.Models;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using TaxiGomelProject.Middleware;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -18,6 +26,19 @@ builder.Services.AddScoped<ICachedService<Car>, CachedCarsService>();
 builder.Services.AddScoped<ICachedService<CarModel>, CachedCarModelsService>();
 builder.Services.AddScoped<ICachedService<Rate>, CachedRatesService>();
 builder.Services.AddScoped<ICachedService<Employee>, CachedEmployeesService>();
+builder.Services.AddScoped<ICachedService<CarDriver>, CachedCarDriversService>();
+builder.Services.AddScoped<ICachedService<CarMechanic>, CachedCarMechanicsService>();
+builder.Services.AddScoped<ICachedService<Position>, CachedPositionsService>();
+builder.Services.AddScoped<ICachedService<Call>, CachedCallsService>();
+var usersConnectionString = builder.Configuration.GetConnectionString("UsersConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(usersConnectionString));
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultUI()
+        .AddDefaultTokenProviders();
+builder.Services.AddControllersWithViews();
+
+
 
 var app = builder.Build();
 app.UseDbInitializer();
@@ -35,9 +56,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
 app.Run();

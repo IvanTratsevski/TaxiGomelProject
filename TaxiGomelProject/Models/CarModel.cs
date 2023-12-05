@@ -22,7 +22,7 @@ namespace TaxiGomelProject.Models
         public string? TechStats { get; set; }
         [Display(Name = "Цена")]
         [Required(ErrorMessage = "Цена не указана")]
-        [Range(1,100000)]
+        [Range(1, 100000)]
         public decimal? Price { get; set; }
         [Display(Name = "Спецификация")]
         [Required(ErrorMessage = "Спецификация не указана")]

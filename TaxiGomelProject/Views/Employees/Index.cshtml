@@ -1,31 +1,86 @@
-﻿@* @model IEnumerable<TaxiGomelProject.Models.Employee> *@
+﻿@using TaxiGomelProject.ViewModels.Employees
 @model EmployeesViewModel
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Сотрудники</h1>
-
-<p>
-    <a asp-action="Create">Добавить</a>
-</p>
+<form method="get" style="width:30%">
+    <div class="form-group">
+        <label>Имя: </label>
+        <input class="form-control" name="firstName" asp-items="@Model.EmployeesFilterViewModel.SelectedFirstName"></input>
+    </div>
+    <div class="form-group">
+        <label>Фамилия: </label>
+        <input class="form-control" name="lastName" asp-items="@Model.EmployeesFilterViewModel.SelectedLastName"></input>
+    </div>
+    <div class="form-group">
+        <label>Возраст: </label>
+        <input class="form-control" name="age" asp-items="@Model.EmployeesFilterViewModel.SelectedAge"></input>
+    </div>
+    <div class="form-group">
+        <label>Опты: </label>
+        <input class="form-control" name="experience" asp-items="@Model.EmployeesFilterViewModel.SelectedAge"></input>
+    </div>
+    <div class="form-group">
+        <label>Должность: </label>
+        <select name="positionId" class="form-control" asp-items="@Model.EmployeesFilterViewModel.Positions"></select>
+    </div>
+    <input type="submit" value="Фильтр" class="btn btn-primary" />
+</form>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Создать</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
             <th>
-                Имя
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.EmployeesSortViewModel.FirstNameSort)"
+                   asp-route-firstName="@(Model.EmployeesFilterViewModel.SelectedFirstName)"
+                   asp-route-lastName="@(Model.EmployeesFilterViewModel.SelectedLastName)"
+                   asp-route-age="@(Model.EmployeesFilterViewModel.SelectedAge)"
+                   asp-route-experience="@(Model.EmployeesFilterViewModel.SelectedExperience)"
+                   asp-route-positionId="@(Model.EmployeesFilterViewModel.SelectedPosition)">Имя</a>
             </th>
             <th>
-                Фамилия
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.EmployeesSortViewModel.LastNameSort)"
+                   asp-route-firstName="@(Model.EmployeesFilterViewModel.SelectedFirstName)"
+                   asp-route-lastName="@(Model.EmployeesFilterViewModel.SelectedLastName)"
+                   asp-route-age="@(Model.EmployeesFilterViewModel.SelectedAge)"
+                   asp-route-experience="@(Model.EmployeesFilterViewModel.SelectedExperience)"
+                   asp-route-positionId="@(Model.EmployeesFilterViewModel.SelectedPosition)">Фамилия</a>
             </th>
             <th>
-                Возраст
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.EmployeesSortViewModel.AgeSort)"
+                   asp-route-firstName="@(Model.EmployeesFilterViewModel.SelectedFirstName)"
+                   asp-route-lastName="@(Model.EmployeesFilterViewModel.SelectedLastName)"
+                   asp-route-age="@(Model.EmployeesFilterViewModel.SelectedAge)"
+                   asp-route-experience="@(Model.EmployeesFilterViewModel.SelectedExperience)"
+                   asp-route-positionId="@(Model.EmployeesFilterViewModel.SelectedPosition)">Возраст</a>
             </th>
             <th>
-                Опыт
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.EmployeesSortViewModel.ExperienceSort)"
+                   asp-route-firstName="@(Model.EmployeesFilterViewModel.SelectedFirstName)"
+                   asp-route-lastName="@(Model.EmployeesFilterViewModel.SelectedLastName)"
+                   asp-route-age="@(Model.EmployeesFilterViewModel.SelectedAge)"
+                   asp-route-experience="@(Model.EmployeesFilterViewModel.SelectedExperience)"
+                   asp-route-positionId="@(Model.EmployeesFilterViewModel.SelectedPosition)">Опыт</a>
             </th>
             <th>
-                Должность
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.EmployeesSortViewModel.PositionSort)"
+                   asp-route-firstName="@(Model.EmployeesFilterViewModel.SelectedFirstName)"
+                   asp-route-lastName="@(Model.EmployeesFilterViewModel.SelectedLastName)"
+                   asp-route-age="@(Model.EmployeesFilterViewModel.SelectedAge)"
+                   asp-route-experience="@(Model.EmployeesFilterViewModel.SelectedExperience)"
+                   asp-route-positionId="@(Model.EmployeesFilterViewModel.SelectedPosition)">Должность</a>
             </th>
             <th></th>
         </tr>
@@ -50,9 +105,15 @@
             </td>
             <td>
                     <div class="list-group">
-                        <a asp-action="Edit" asp-route-id="@item.EmployeeId" class="list-group-item list-group-item-primary">Редактировать</a>
-                        <a asp-action="Details" asp-route-id="@item.EmployeeId" class="list-group-item list-group-item-success">Подробности</a>
-                        <a asp-action="Delete" asp-route-id="@item.EmployeeId" class="list-group-item list-group-item-danger">Удалить</a>
+                        @if (User.IsInRole("admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.EmployeeId" class="list-group-item list-group-item-primary">Редактировать</a>
+                            <a asp-action="Delete" asp-route-id="@item.EmployeeId" class="list-group-item list-group-item-danger">Удалить</a>
+                        }
+                        @if (User.IsInRole("admin") || User.IsInRole("user"))
+                        {
+                            <a asp-action="Details" asp-route-id="@item.EmployeeId" class="list-group-item list-group-item-success">Подробности</a>
+                        }
                     </div>
                 
             </td>
@@ -65,22 +126,34 @@
 
         @if (Model.PageViewModel.HasPreviousPage)
         {
-            <button type="button" class="btn btn-primary">
-                <a asp-action="Index"
-                   asp-route-page="@(Model.PageViewModel.PageNumber - 1)" style="text-decoration:none; color:white">
+                <a class="btn btn-primary"
+                   asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+               asp-route-firstName="@(Model.EmployeesFilterViewModel.SelectedFirstName)"
+               asp-route-lastName="@(Model.EmployeesFilterViewModel.SelectedLastName)"
+               asp-route-age="@(Model.EmployeesFilterViewModel.SelectedAge)"
+               asp-route-experience="@(Model.EmployeesFilterViewModel.SelectedExperience)"
+               asp-route-positionId="@(Model.EmployeesFilterViewModel.SelectedPosition)"
+               asp-route-sortorder="@(Model.EmployeesSortViewModel.Current)"
+                   style="text-decoration:none; color:white">
                     Назад
                 </a>
-            </button>
 
         }
         @if (Model.PageViewModel.HasNextPage)
         {
-            <button type="button" class="btn btn-primary">
-                <a asp-action="Index"
-                   asp-route-page="@(Model.PageViewModel.PageNumber + 1)" style="text-decoration:none; color:white">
+                <a class="btn btn-primary"
+                   asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+               asp-route-firstName="@(Model.EmployeesFilterViewModel.SelectedFirstName)"
+               asp-route-lastName="@(Model.EmployeesFilterViewModel.SelectedLastName)"
+               asp-route-age="@(Model.EmployeesFilterViewModel.SelectedAge)"
+               asp-route-experience="@(Model.EmployeesFilterViewModel.SelectedExperience)"
+               asp-route-positionId="@(Model.EmployeesFilterViewModel.SelectedPosition)"
+               asp-route-sortorder="@(Model.EmployeesSortViewModel.Current)"
+                   style="text-decoration:none; color:white">
                     Вперед
                 </a>
-            </button>
 
         }
     </div>

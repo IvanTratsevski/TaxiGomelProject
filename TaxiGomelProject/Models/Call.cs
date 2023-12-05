@@ -13,7 +13,7 @@ namespace TaxiGomelProject.Models
         [Display(Name = "Телефон клиента")]
         [Required(ErrorMessage = "Телефон клиента не указан")]
         [StringLength(11, MinimumLength = 7)]
-        public string? Telephone { get; set; }
+        public string Telephone { get; set; }
         [Display(Name = "Адрес отправления")]
         [Required(ErrorMessage = "Адрес отправления не указан")]
         [StringLength(25, MinimumLength = 7)]

@@ -178,11 +178,17 @@ namespace TaxiGomelProject.Middleware
             //вторую таблицу невозможно заполнить, однако я так и не смог выяснить в чем конфликт
             if (!db.CarDrivers.Any())
             {
+                db.CarDrivers.Add(new CarDriver
+                {
+                    CarId = 1,
+                    DriverId = 1
+
+                });
                 for (int i = 0; i < many_link; i++)
                 {
                     db.CarDrivers.Add(new CarDriver
                     {
-                        CarId = random.Next(1, many_link),
+                        CarId = random.Next(1, many_link - 1),
                         DriverId = 1,
                     });
                 }
@@ -201,8 +207,12 @@ namespace TaxiGomelProject.Middleware
                 {
                     db.Calls.Add(new Call
                     {
-                        Telephone = telephone,
-                        RateId=1,CarId=1,
+                        CallTime = GetRandomDate(),
+                        Telephone = GetRandomNumbers(10),
+                        StartPosition = GetRandomAdress(),
+                        EndPosition = GetRandomAdress(),
+                        RateId= random.Next(1, single_link),
+                        CarId= random.Next(1, single_link),
                         DispatcherId=3
                     });
                 }

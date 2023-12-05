@@ -11,6 +11,7 @@ namespace TaxiGomelProject.Middleware
         {
             try
             {
+                UsersInitializer.Initialize(context).Wait();
                 DbInitializer.Initialize(dbContext);
             }
             catch (Exception ex)

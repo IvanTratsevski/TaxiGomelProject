@@ -1,0 +1,189 @@
+﻿@using TaxiGomelProject.ViewModels.Calls
+@model CallsViewModel
+
+@{
+    ViewData["Title"] = "Вызовы";
+}
+
+<h1>Вызовы</h1>
+<form method="get" style="width:30%">
+    <div class="form-group">
+    <label>Время вызова: </label>
+        <input class="form-control" type="date" name="callTime" asp-items="@Model.CallsFilterViewModel.SelectedCallTime"></input>
+    </div>
+    <div class="form-group">
+    <label>Автомобиль: </label>
+        <select class="form-control" name="carId" asp-items="@Model.CallsFilterViewModel.Cars"></select>
+    </div>
+    <div class="form-group">
+    <label>Тариф: </label>
+        <select class="form-control" name="rateId" asp-items="@Model.CallsFilterViewModel.Rates"></select>
+    </div>
+    <div class="form-group">
+    <label>Диспетчер: </label>
+        <select class="form-control" name="employeeId" asp-items="@Model.CallsFilterViewModel.Employees"></select>
+    </div>
+    <div class="form-group">
+    <label>Телефон: </label>
+        <input class="form-control" name="telephone" asp-items="@Model.CallsFilterViewModel.SelectedTelephone" value="@Model.CallsFilterViewModel.SelectedTelephone"></input>
+    </div>
+    <div class="form-group">
+    <label>Адресс отправления: </label>
+        <input class="form-control" name="startPosition" asp-items="@Model.CallsFilterViewModel.SelectedStartPosition" value="@Model.CallsFilterViewModel.SelectedStartPosition"></input>
+    </div>
+    <div class="form-group">
+    <label>Адресс прибытия: </label>
+        <input class="form-control" name="endPosition" asp-items="@Model.CallsFilterViewModel.SelectedEndPosition" value="@Model.CallsFilterViewModel.SelectedEndPosition"></input>
+    </div>
+    <input type="submit" class="btn btn-primary" value="Фильтр" />
+</form>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Создать</a>
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.CallsSortViewModel.CallTimeSort)"
+                   asp-route-callTime="@(Model.CallsFilterViewModel.SelectedCallTime)"
+                   asp-route-carId="@(Model.CallsFilterViewModel.SelectedCar)"
+                   asp-route-rateId="@(Model.CallsFilterViewModel.SelectedRate)"
+                   asp-route-employeeId="@(Model.CallsFilterViewModel.SelectedEmployee)"
+                   asp-route-startPosition="@(Model.CallsFilterViewModel.SelectedStartPosition)"
+                   asp-route-endPosition="@(Model.CallsFilterViewModel.SelectedEndPosition)"
+                   asp-route-telephone="@(Model.CallsFilterViewModel.SelectedTelephone)">Время вызова</a>
+            </th>
+            <th>
+                Телефон
+            </th>
+            <th>
+                Точка отправления
+            </th>
+            <th>
+                Точка назначения
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.CallsSortViewModel.CarSort)"
+                   asp-route-callTime="@(Model.CallsFilterViewModel.SelectedCallTime)"
+                   asp-route-carId="@(Model.CallsFilterViewModel.SelectedCar)"
+                   asp-route-rateId="@(Model.CallsFilterViewModel.SelectedRate)"
+                   asp-route-employeeId="@(Model.CallsFilterViewModel.SelectedEmployee)"
+                   asp-route-startPosition="@(Model.CallsFilterViewModel.SelectedStartPosition)"
+                   asp-route-endPosition="@(Model.CallsFilterViewModel.SelectedEndPosition)"
+                   asp-route-telephone="@(Model.CallsFilterViewModel.SelectedTelephone)">Автомобиль</a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.CallsSortViewModel.DispatcherSort)"
+                   asp-route-callTime="@(Model.CallsFilterViewModel.SelectedCallTime)"
+                   asp-route-carId="@(Model.CallsFilterViewModel.SelectedCar)"
+                   asp-route-rateId="@(Model.CallsFilterViewModel.SelectedRate)"
+                   asp-route-employeeId="@(Model.CallsFilterViewModel.SelectedEmployee)"
+                   asp-route-startPosition="@(Model.CallsFilterViewModel.SelectedStartPosition)"
+                   asp-route-endPosition="@(Model.CallsFilterViewModel.SelectedEndPosition)"
+                   asp-route-telephone="@(Model.CallsFilterViewModel.SelectedTelephone)">Диспетчер</a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.CallsSortViewModel.RateSort)"
+                   asp-route-callTime="@(Model.CallsFilterViewModel.SelectedCallTime)"
+                   asp-route-carId="@(Model.CallsFilterViewModel.SelectedCar)"
+                   asp-route-rateId="@(Model.CallsFilterViewModel.SelectedRate)"
+                   asp-route-employeeId="@(Model.CallsFilterViewModel.SelectedEmployee)"
+                   asp-route-startPosition="@(Model.CallsFilterViewModel.SelectedStartPosition)"
+                   asp-route-endPosition="@(Model.CallsFilterViewModel.SelectedEndPosition)"
+                   asp-route-telephone="@(Model.CallsFilterViewModel.SelectedTelephone)">Тариф</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Calls) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CallTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Telephone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartPosition)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndPosition)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Car.RegistrationNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dispatcher.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rate.RateDescription)
+            </td>
+            <td>
+                    <div class="list-group">
+                        @if (User.IsInRole("admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.CallId" class="list-group-item list-group-item-primary">Редактировать</a>
+                            <a asp-action="Delete" asp-route-id="@item.CallId" class="list-group-item list-group-item-danger">Удалить</a>
+                        }
+                        @if (User.IsInRole("admin") || User.IsInRole("user"))
+                        {
+                            <a asp-action="Details" asp-route-id="@item.CallId" class="list-group-item list-group-item-success">Подробности</a>
+                        }
+
+                
+                
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<p>
+    <div class="btn-group" role="group" aria-label="Basic example">
+
+        @if (Model.PageViewModel.HasPreviousPage)
+        {
+
+            <a asp-action="Index"
+               class="btn btn-primary"
+               asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+               asp-route-callTime="@(Model.CallsFilterViewModel.SelectedCallTime)"
+               asp-route-carId="@(Model.CallsFilterViewModel.SelectedCar)"
+               asp-route-rateId="@(Model.CallsFilterViewModel.SelectedRate)"
+               asp-route-employeeId="@(Model.CallsFilterViewModel.SelectedEmployee)"
+               asp-route-startPosition="@(Model.CallsFilterViewModel.SelectedStartPosition)"
+               asp-route-endPosition="@(Model.CallsFilterViewModel.SelectedEndPosition)"
+               asp-route-telephone="@(Model.CallsFilterViewModel.SelectedTelephone)"
+               asp-route-sortorder="@(Model.CallsSortViewModel.Current)"
+               style="text-decoration:none; color:white">
+                Назад
+            </a>
+
+        }
+        @if (Model.PageViewModel.HasNextPage)
+        {
+            <a asp-action="Index"
+               class="btn btn-primary"
+               asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+               asp-route-callTime="@(Model.CallsFilterViewModel.SelectedCallTime)"
+               asp-route-carId="@(Model.CallsFilterViewModel.SelectedCar)"
+               asp-route-rateId="@(Model.CallsFilterViewModel.SelectedRate)"
+               asp-route-employeeId="@(Model.CallsFilterViewModel.SelectedEmployee)"
+               asp-route-startPosition="@(Model.CallsFilterViewModel.SelectedStartPosition)"
+               asp-route-endPosition="@(Model.CallsFilterViewModel.SelectedEndPosition)"
+               asp-route-telephone="@(Model.CallsFilterViewModel.SelectedTelephone)"
+               asp-route-sortorder="@(Model.CallsSortViewModel.Current)"
+               style="text-decoration:none; color:white">
+                Вперед
+            </a>
+
+        }
+    </div>
+</p>

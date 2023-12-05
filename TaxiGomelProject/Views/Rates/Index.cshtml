@@ -1,22 +1,41 @@
-﻿@* @model IEnumerable<TaxiGomelProject.Models.Rate> *@
+﻿@using TaxiGomelProject.ViewModels.Rates
 @model RatesViewModel
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Тарифы</h1>
-
-<p>
-    <a asp-action="Create">Добавить</a>
-</p>
+<form method="get" style="width:30%">
+    <div class="form-group">
+        <label>Тариф: </label>
+        <input class="form-control" name="rateName" asp-items="@Model.RatesFilterViewModel.SelectedRateName"></input>
+    </div>
+    <div class="form-group">
+        <label>Цена: </label>
+        <input class="form-control" name="price" asp-items="@Model.RatesFilterViewModel.SelectedPrice"></input>
+    </div>
+    <input type="submit" value="Фильтр" class="btn btn-primary" />
+</form>
+@if (User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Создать</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
             <th>
-                Тариф
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.RatesSortViewModel.RateNameSort)"
+                   asp-route-rateName="@(Model.RatesFilterViewModel.SelectedRateName)"
+                   asp-route-price="@(Model.RatesFilterViewModel.SelectedPrice)">Тариф</a>
             </th>
             <th>
-                Стоимость
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.RatesSortViewModel.PriceSort)"
+                   asp-route-rateName="@(Model.RatesFilterViewModel.SelectedRateName)"
+                   asp-route-price="@(Model.RatesFilterViewModel.SelectedPrice)">Цена</a>
             </th>
             <th></th>
         </tr>
@@ -31,10 +50,18 @@
                 @Html.DisplayFor(modelItem => item.RatePrice)
             </td>
             <td>
+
                     <div class="list-group">
-                        <a asp-action="Edit" asp-route-id="@item.RateId" class="list-group-item list-group-item-primary">Редактировать</a>
-                        <a asp-action="Details" asp-route-id="@item.RateId" class="list-group-item list-group-item-success">Подробности</a>
-                        <a asp-action="Delete" asp-route-id="@item.RateId" class="list-group-item list-group-item-danger">Удалить</a>
+                        @if (User.IsInRole("admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.RateId" class="list-group-item list-group-item-primary">Редактировать</a>
+                            
+                            <a asp-action="Delete" asp-route-id="@item.RateId" class="list-group-item list-group-item-danger">Удалить</a>
+                        }
+                        @if(User.IsInRole("admin") || User.IsInRole("user"))
+                        {
+                            <a asp-action="Details" asp-route-id="@item.RateId" class="list-group-item list-group-item-success">Подробности</a>
+                        }
                     </div>
                 
             </td>
@@ -47,22 +74,28 @@
 
         @if (Model.PageViewModel.HasPreviousPage)
         {
-            <button type="button" class="btn btn-primary">
                 <a asp-action="Index"
-                   asp-route-page="@(Model.PageViewModel.PageNumber - 1)" style="text-decoration:none; color:white">
+                   class="btn btn-primary"
+                   asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+               asp-route-rateName="@(Model.RatesFilterViewModel.SelectedRateName)"
+               asp-route-price="@(Model.RatesFilterViewModel.SelectedPrice)"
+               asp-route-sortorder="@(Model.RatesSortViewModel.Current)"
+                   style="text-decoration:none; color:white">
                     Назад
                 </a>
-            </button>
 
         }
         @if (Model.PageViewModel.HasNextPage)
         {
-            <button type="button" class="btn btn-primary">
                 <a asp-action="Index"
-                   asp-route-page="@(Model.PageViewModel.PageNumber + 1)" style="text-decoration:none; color:white">
+                   class="btn btn-primary"
+                   asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+               asp-route-rateName="@(Model.RatesFilterViewModel.SelectedRateName)"
+               asp-route-price="@(Model.RatesFilterViewModel.SelectedPrice)"
+               asp-route-sortorder="@(Model.RatesSortViewModel.Current)"
+                   style="text-decoration:none; color:white">
                     Вперед
                 </a>
-            </button>
 
         }
     </div>
